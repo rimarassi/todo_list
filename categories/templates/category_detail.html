@@ -1,0 +1,63 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da categoria | TaskFlow{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Detalhes da categoria</h2>
+      <p class="text-secondary mb-0">
+        Visualize as informações da categoria selecionada.
+      </p>
+    </div>
+
+    <a href="{% url 'category_list' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i>
+      Voltar
+    </a>
+  </div>
+
+  <div class="card border-secondary">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <span
+          class="rounded-circle border"
+          style="width: 48px; height: 48px; background-color: {{ object.color }};"
+        ></span>
+
+        <div>
+          <h4 class="mb-1">{{ object.name }}</h4>
+          <small class="text-secondary">Categoria #{{ object.pk }}</small>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <small class="text-secondary d-block">Nome</small>
+        <span>{{ object.name }}</span>
+      </div>
+
+      <div class="mb-3">
+        <small class="text-secondary d-block">Cor</small>
+        <span>{{ object.color }}</span>
+      </div>
+
+      <div class="mb-4">
+        <small class="text-secondary d-block">Data de criação</small>
+        <span>{{ object.created_at|date:"d/m/Y H:i" }}</span>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <a href="{% url 'category_update' object.pk %}" class="btn btn-outline-warning">
+          <i class="bi bi-pencil me-1"></i>
+          Editar
+        </a>
+
+        <a href="{% url 'category_delete' object.pk %}" class="btn btn-outline-danger">
+          <i class="bi bi-trash me-1"></i>
+          Excluir
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

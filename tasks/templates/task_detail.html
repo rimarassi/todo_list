@@ -1,0 +1,81 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da tarefa | TaskFlow{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Detalhes da tarefa</h2>
+      <p class="text-secondary mb-0">Informações da atividade selecionada.</p>
+    </div>
+
+    <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i>
+      Voltar
+    </a>
+  </div>
+
+  <div class="card border-secondary">
+    <div class="card-body p-4">
+      <h3 class="fw-bold mb-3">{{ task.title }}</h3>
+
+      <div class="mb-4">
+        <small class="text-secondary d-block mb-1">Descrição</small>
+        <p>{{ task.description|default:"Nenhuma descrição informada." }}</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <small class="text-secondary d-block">Categoria</small>
+          {% if task.category %}
+            {{ task.category.name }}
+          {% else %}
+            Sem categoria
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <small class="text-secondary d-block">Prioridade</small>
+          {{ task.get_priority_display }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <small class="text-secondary d-block">Status</small>
+          {{ task.get_status_display }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <small class="text-secondary d-block">Vencimento</small>
+          {% if task.due_date %}
+            {{ task.due_date|date:"d/m/Y" }}
+          {% else %}
+            Sem prazo definido
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <small class="text-secondary d-block">Criada em</small>
+          {{ task.created_at|date:"d/m/Y H:i" }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <small class="text-secondary d-block">Última atualização</small>
+          {{ task.updated_at|date:"d/m/Y H:i" }}
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-3">
+        <a href="{% url 'task_update' task.pk %}" class="btn btn-outline-warning">
+          <i class="bi bi-pencil me-1"></i>
+          Editar
+        </a>
+
+        <a href="{% url 'task_delete' task.pk %}" class="btn btn-outline-danger">
+          <i class="bi bi-trash me-1"></i>
+          Excluir
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

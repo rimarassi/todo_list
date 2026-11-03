@@ -1,0 +1,257 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | TaskFlow{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+
+    <!-- Cabeçalho -->
+    <div class="mb-4">
+      <h2 class="fw-bold mb-1">
+        Olá, {{ user.first_name|default:user.username }}!
+      </h2>
+      <p class="text-secondary mb-0">
+        Aqui está um resumo das suas tarefas.
+      </p>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="row g-3">
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-secondary h-100">
+          <div class="card-body">
+            <p class="text-secondary mb-2">Total de tarefas</p>
+            <h3 class="fw-bold mb-0">{{ total_tasks }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-secondary h-100">
+          <div class="card-body">
+            <p class="text-secondary mb-2">Pendentes</p>
+            <h3 class="fw-bold mb-0">{{ pending_tasks }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-secondary h-100">
+          <div class="card-body">
+            <p class="text-secondary mb-2">Em andamento</p>
+            <h3 class="fw-bold mb-0">{{ in_progress_tasks }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-secondary h-100">
+          <div class="card-body">
+            <p class="text-secondary mb-2">Concluídas</p>
+            <h3 class="fw-bold mb-0">{{ completed_tasks }}</h3>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tarefas em destaque -->
+    <div class="mt-4">
+      <h4 class="fw-bold mb-3">Tarefas em destaque</h4>
+
+      <div class="row g-3">
+
+        <!-- Tarefas atrasadas -->
+        <div class="col-12 col-xl-4">
+          <div class="card border-secondary h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Atrasadas</h5>
+                <span class="badge text-bg-danger">
+                  {{ overdue_tasks.count }}
+                </span>
+              </div>
+
+              {% for task in overdue_tasks|slice:":5" %}
+                <div class="border-bottom border-secondary py-2">
+                  <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none">
+                    {{ task.title }}
+                  </a>
+                  <small class="d-block text-danger">
+                    Venceu em {{ task.due_date|date:"d/m/Y" }}
+                  </small>
+                </div>
+              {% empty %}
+                <p class="text-secondary mb-0">
+                  Nenhuma tarefa atrasada.
+                </p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximas tarefas -->
+        <div class="col-12 col-xl-4">
+          <div class="card border-secondary h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Próximas</h5>
+                <span class="badge text-bg-primary">
+                  {{ upcoming_tasks.count }}
+                </span>
+              </div>
+
+              {% for task in upcoming_tasks|slice:":5" %}
+                <div class="border-bottom border-secondary py-2">
+                  <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none">
+                    {{ task.title }}
+                  </a>
+                  <small class="d-block text-secondary">
+                    Vence em {{ task.due_date|date:"d/m/Y" }}
+                  </small>
+                </div>
+              {% empty %}
+                <p class="text-secondary mb-0">
+                  Nenhuma tarefa próxima.
+                </p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarefas prioritárias -->
+        <div class="col-12 col-xl-4">
+          <div class="card border-secondary h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Prioritárias</h5>
+                <span class="badge text-bg-warning">
+                  {{ priority_tasks.count }}
+                </span>
+              </div>
+
+              {% for task in priority_tasks|slice:":5" %}
+                <div class="border-bottom border-secondary py-2">
+                  <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none">
+                    {{ task.title }}
+                  </a>
+                  <small class="d-block text-secondary">
+                    Prioridade alta
+                  </small>
+                </div>
+              {% empty %}
+                <p class="text-secondary mb-0">
+                  Nenhuma tarefa prioritária.
+                </p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Progresso -->
+    <div class="mt-4">
+      <h4 class="fw-bold mb-3">Progresso</h4>
+
+      <div class="row g-3">
+
+        <!-- Percentual de conclusão -->
+        <div class="col-12 col-lg-6">
+          <div class="card border-secondary h-100">
+            <div class="card-body">
+              <h5 class="fw-bold mb-3">Conclusão das tarefas</h5>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-secondary">Progresso geral</span>
+                <span class="fw-bold">{{ completion_rate }}%</span>
+              </div>
+
+              <div
+                class="progress"
+                role="progressbar"
+                aria-label="Progresso das tarefas"
+                aria-valuenow="{{ completion_rate }}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                style="height: 12px;"
+              >
+                <div
+                  class="progress-bar bg-success"
+                  style="width: {{ completion_rate }}%;"
+                ></div>
+              </div>
+
+              <p class="text-secondary small mt-3 mb-0">
+                {{ completed_tasks }} de {{ total_tasks }} tarefas concluídas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de distribuição -->
+        <div class="col-12 col-lg-6">
+          <div class="card border-secondary h-100">
+            <div class="card-body">
+              <h5 class="fw-bold mb-3">Distribuição por status</h5>
+
+              <div class="d-flex justify-content-center">
+                <div style="width: 100%; max-width: 280px;">
+                  <canvas id="statusChart"></canvas>
+                </div>
+              </div>
+
+              {{ status_data|json_script:"status-data" }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <script>
+    const statusData = JSON.parse(
+      document.getElementById('status-data').textContent
+    );
+
+    const ctx = document.getElementById('statusChart');
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pendentes', 'Em andamento', 'Concluídas'],
+        datasets: [{
+          data: statusData,
+          backgroundColor: [
+            '#6c757d',
+            '#0d6efd',
+            '#198754'
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#adb5bd',
+              padding: 20
+            }
+          }
+        }
+      }
+    });
+  </script>
+{% endblock %}

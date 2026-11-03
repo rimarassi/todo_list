@@ -1,0 +1,36 @@
+<aside class="col-md-3 col-lg-2 border-end border-secondary p-3 d-flex flex-column">
+  <div>
+    <small class="text-uppercase text-secondary fw-bold">Menu principal</small>
+
+    <nav class="nav flex-column gap-2 mt-3">
+      <a href="{% url 'home' %}"
+         class="nav-link rounded d-flex align-items-center gap-2 {% if request.path == '/' %}active bg-primary{% else %}text-secondary{% endif %}">
+        <i class="bi bi-grid"></i>
+        Dashboard
+      </a>
+
+      <a href="{% url 'task_list' %}"
+         class="nav-link rounded d-flex align-items-center gap-2 {% if 'tasks' in request.path %}active bg-primary{% else %}text-secondary{% endif %}">
+        <i class="bi bi-check2-square"></i>
+        Tarefas
+      </a>
+
+      <a href="{% url 'category_list' %}"
+         class="nav-link rounded d-flex align-items-center gap-2 {% if 'categories' in request.path %}active bg-primary{% else %}text-secondary{% endif %}">
+        <i class="bi bi-tags"></i>
+        Categorias
+      </a>
+    </nav>
+  </div>
+
+  <div class="mt-auto pt-3 border-top border-secondary">
+    <form method="POST" action="{% url 'logout' %}">
+      {% csrf_token %}
+
+      <button type="submit" class="nav-link text-danger d-flex align-items-center gap-2 w-100">
+        <i class="bi bi-box-arrow-right"></i>
+        Sair
+      </button>
+    </form>
+  </div>
+</aside>

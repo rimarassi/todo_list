@@ -1,0 +1,35 @@
+services:
+  web:
+    build: .
+    container_name: kaksflow_web
+    command: >
+      sh -c "python manage.py migrate &&
+             (python manage.py runserver 0.0.0.0:8000 &) &&
+             exec uvicorn api.main:app --host 0.0.0.0 --port 8001"
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18
+    container_name: kaksflow_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
